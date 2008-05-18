@@ -54,4 +54,4 @@ master or upstream. If you haven't yet, don't worry - this won't eat your data. 
 
 h2. Credits
 
-Brian Donovan (aka eventualbuddha) created the original sake-git task set, which can be found on "GitHub":http://github.com/eventualbuddha/sake-git/tree
+Brian Donovan (aka eventualbuddha) created the original sake-git task set, which can be found on "GitHub":http://github.com/eventualbuddha/sake-git/tree.
