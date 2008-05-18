@@ -6,27 +6,27 @@ class Git < Thor
   desc "open [NAME]", "Create a new branch off master, named NAME"
   def open(name)
     newbranch = (!name.empty? ? name : begin
-      (require("readline")
-      print("* Name your branch: ")
-      Readline.readline.chomp)
+      require "readline"
+      print "* Name your branch: "
+      Readline.readline.chomp
     end)
     branch = git_branch
-    if git_branches.include?(newbranch) then
-      if (newbranch == branch) then
-        puts("* Already on branch \"#{newbranch}\"")
+    if git_branches.include?(newbranch)
+      if newbranch == branch
+        puts "* Already on branch \"#{newbranch}\""
       else
-        puts("* Switching to existing branch \"#{newbranch}\"")
+        puts "* Switching to existing branch \"#{newbranch}\""
         git_checkout(newbranch)
       end
       exit(0)
     end
-    unless (branch == "master") then
-      puts("* Switching to master")
+    unless branch == "master"
+      puts "* Switching to master"
       git_checkout("master")
     end
     `git-checkout -b #{newbranch}`
-    unless $?.exitstatus.zero? then
-      puts("* Couldn't create branch #{newbranch}, switching back to #{branch}")
+    unless $?.exitstatus.zero?
+      puts "* Couldn't create branch #{newbranch}, switching back to #{branch}"
       git_checkout(branch)
       exit(1)
     end
@@ -37,48 +37,48 @@ class Git < Thor
   def close(name)
     branch = (!name.empty? ? name : git_branch)
     current = git_branch
-    if (branch == "master") then
-      $stderr.puts("* Cannot delete master branch")
+    if branch == "master"
+      $stderr.puts "* Cannot delete master branch"
       exit(1)
     end
-    if (current == branch) then
-      puts("* Switching to master")
+    if current == branch
+      puts "* Switching to master"
       git_checkout("master")
     end
-    puts("* Deleting branch #{branch}")
+    puts "* Deleting branch #{branch}"
     `git-branch -d #{branch} 2>/dev/null`
-    if ($?.exitstatus == 1) then
-      $stderr.puts("* Branch #{branch} isn't a strict subset of master, quitting")
+    if $?.exitstatus == 1
+      $stderr.puts "* Branch #{branch} isn't a strict subset of master, quitting"
       git_checkout(current)
       exit(1)
     end
-    git_checkout(current) unless (current == branch)
+    git_checkout(current) unless current == branch
     exit(0)
   end
 
   desc "fold", "Merge the current branch into the master branch."
   def fold
     branch = git_branch
-    if (branch == "master") then
-      $stderr.puts("* Cannot fold master branch")
+    if branch == "master"
+      $stderr.puts "* Cannot fold master branch"
       exit(1)
     end
-    puts("* Switching to master")
+    puts "* Switching to master"
     git_checkout("master")
-    puts("* Merging #{branch}")
+    puts "* Merging #{branch}"
     system("git-merge #{@merge_flags} #{branch}")
-    if ($?.exitstatus == 1) then
-      $stderr.puts("* Merge had errors -- see to your friend")
+    if $?.exitstatus == 1
+      $stderr.puts "* Merge had errors -- see to your friend"
       exit(1)
     end
-    puts("* Switching to #{branch}")
+    puts "* Switching to #{branch}"
     git_checkout(branch)
   end
 
   desc "ify", "Converts an existing Subversion Repo into a Git Repository"
   def ify
-    unless File.directory?("./.svn") then
-      $stderr.puts("This task can only be executed in an existing working copy! (No .svn-Folder found)")
+    unless File.directory?("./.svn")
+      $stderr.puts "This task can only be executed in an existing working copy! (No .svn-Folder found)"
       exit(1)
     end
     svnurl = `svn info`.grep(/^URL:/).first.gsub("URL: ", "").chomp
@@ -90,12 +90,12 @@ class Git < Thor
   desc "push", "Push local commits into the remote repository"
   def push
     git_stash do
-      puts("* Pushing changes...")
+      puts "* Pushing changes..."
       git_push
       branch = git_branch
-      unless (branch == "master") then
+      if branch != "master"
         git_checkout("master")
-        puts("* Porting changes into master")
+        puts "* Porting changes into master"
         git_rebase
         git_checkout(branch)
       end
@@ -112,18 +112,18 @@ class Git < Thor
   def update
     git_stash do
       branch = git_branch
-      if (branch == "master") then
+      if branch == "master"
         switch = false
       else
         switch = true
         git_checkout("master")
-        puts("* Switching back to master...")
+        puts "* Switching back to master..."
       end
-      puts("* Pulling in new commits...")
+      puts "* Pulling in new commits..."
       git_fetch
       git_rebase
-      if switch then
-        puts("* Porting changes into #{branch}...")
+      if switch
+        puts "* Porting changes into #{branch}..."
         git_checkout(branch)
         git_rebase("master")
       end
@@ -136,11 +136,11 @@ class Git < Thor
       branch = git_branch
       switch = true
       git_branches.each do |b|
-        puts("* Updating branch #{b}")
+        puts "* Updating branch #{b}"
         begin
           git_rebase(b)
         rescue GitRebaseError => e
-          puts("* Couldn't rebase #{b}, aborting so you can clean it up")
+          puts "* Couldn't rebase #{b}, aborting so you can clean it up"
           switch = false
           break
         end
@@ -161,15 +161,15 @@ class Git < Thor
   
   def git?
     `git-status`
-    (not ($?.exitstatus == 128))
+    $?.exitstatus != 128
   end
   
   def git_stash
     `git-diff-files --quiet`
-    if ($?.exitstatus == 1) then
+    if $?.exitstatus == 1
       stash = true
       clear = (`git-stash list`.scan("\n").size == 0)
-      puts("* Saving changes...")
+      puts "* Saving changes..."
       `git-stash save`
     else
       stash = false
@@ -177,10 +177,10 @@ class Git < Thor
     begin
       yield
     rescue
-      puts("* Encountered an error, backing out...")
+      puts "* Encountered an error, backing out..."
     ensure
-      if stash then
-        puts("* Applying changes...")
+      if stash
+        puts "* Applying changes..."
         `git-stash apply`
         `git-stash clear` if clear
       end
@@ -189,10 +189,10 @@ class Git < Thor
  
   def git_checkout(what = nil)
     branch = git_branch
-    `git-checkout #{what}` unless (branch == what)
-    if block_given? then
+    `git-checkout #{what}` if branch != what
+    if block_given?
       yield
-      `git-checkout #{branch}` unless (branch == what)
+      `git-checkout #{branch}` if branch != what
     end
   end
  
@@ -201,7 +201,7 @@ class Git < Thor
   end
  
   def assert_command_succeeded(*args)
-    raise(*args) unless ($?.exitstatus == 0)
+    raise(*args) unless $?.exitstatus == 0
   end
  
   def assert_rebase_succeeded(what = nil)
@@ -209,7 +209,7 @@ class Git < Thor
   end
   
   def git_rebase(what = nil)
-    if git_svn? then
+    if git_svn?
       git_checkout(what) do
         `git-svn rebase --local`
         assert_rebase_succeeded(what)
