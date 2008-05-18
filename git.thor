@@ -76,14 +76,19 @@ class Git < Thor
   end
 
   desc "ify", "Converts an existing Subversion Repo into a Git Repository"
-  def ify
+  method_options :stdlayout => :boolean
+  def ify(opts)
     unless File.directory?("./.svn")
       $stderr.puts "This task can only be executed in an existing working copy! (No .svn-Folder found)"
       exit(1)
     end
     svnurl = `svn info`.grep(/^URL:/).first.gsub("URL: ", "").chomp
+
+    # Remove "trunk" from the svnurl if we use the stdlayout option
+    svnurl.slice!(-5, 5) if opts[:stdlayout] && svnurl =~ /trunk$/
+
     project = "../#{File.basename(Dir.pwd)}.git"
-    puts(cmd = "git svn clone #{svnurl} #{project}")
+    puts(cmd = "git svn clone #{"--stdlayout" if opts[:stdlayout]} #{svnurl} #{project}")
     `#{cmd}`
   end
 
