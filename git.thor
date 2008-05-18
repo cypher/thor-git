@@ -2,6 +2,12 @@ class GitError < RuntimeError; end
 class GitRebaseError < GitError; end
 
 class Git < Thor
+  
+  def initialize
+    super
+    correct_env_from_argv
+  end
+  
   desc "close", "Delete the current branch and switch back to master"
   def close
     branch = (env("NAME") or git_branch)
@@ -250,6 +256,4 @@ class Git < Thor
       val
     end
   end
-
-  correct_env_from_argv
 end
