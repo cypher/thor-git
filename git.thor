@@ -62,9 +62,9 @@ class Git < Thor
     `#{cmd}`
   end
 
-  desc "open", "Create a new branch off master"
-  def open
-    newbranch = (env("NAME") or begin
+  desc "open [NAME]", "Create a new branch off master, named NAME"
+  def open(name)
+    newbranch = (!name.empty? ? name : begin
       (require("readline")
       print("* Name your branch: ")
       Readline.readline.chomp)
