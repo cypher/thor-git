@@ -125,7 +125,7 @@ class Git < Thor
       if switch then
         puts("* Porting changes into #{branch}...")
         git_checkout(branch)
-        `git-rebase master`
+        git_rebase("master")
       end
     end
   end
