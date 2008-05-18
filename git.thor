@@ -18,16 +18,16 @@ class Git < Thor
     end
     if (current == branch) then
       puts("* Switching to master")
-      `git-checkout master 2>/dev/null`
+      git_checkout("master")
     end
     puts("* Deleting branch #{branch}")
     `git-branch -d #{branch} 2>/dev/null`
     if ($?.exitstatus == 1) then
       $stderr.puts("* Branch #{branch} isn't a strict subset of master, quitting")
-      `git-checkout #{current} 2>/dev/null`
+      git_checkout(current)
       exit(1)
     end
-    `git-checkout #{current} 2>/dev/null` unless (current == branch)
+    git_checkout(current) unless (current == branch)
     exit(0)
   end
 
@@ -39,7 +39,7 @@ class Git < Thor
       exit(1)
     end
     puts("* Switching to master")
-    `git-checkout master 2>/dev/null`
+    git_checkout("master")
     puts("* Merging #{branch}")
     system("git-merge #{@merge_flags} #{branch}")
     if ($?.exitstatus == 1) then
@@ -47,7 +47,7 @@ class Git < Thor
       exit(1)
     end
     puts("* Switching to #{branch}")
-    `git-checkout #{branch} 2>/dev/null`
+    git_checkout(branch)
   end
 
   desc "ify", "Converts an existing Subversion Repo into a Git Repository"
@@ -99,10 +99,10 @@ class Git < Thor
       git_push
       branch = git_branch
       unless (branch == "master") then
-        `git-checkout master`
+        git_checkout("master")
         puts("* Porting changes into master")
         git_rebase
-        `git-checkout #{branch}`
+        git_checkout(branch)
       end
     end
   end
@@ -121,7 +121,7 @@ class Git < Thor
         switch = false
       else
         switch = true
-        `git-checkout master`
+        git_checkout("master")
         puts("* Switching back to master...")
       end
       puts("* Pulling in new commits...")
@@ -129,7 +129,7 @@ class Git < Thor
       git_rebase
       if switch then
         puts("* Porting changes into #{branch}...")
-        `git-checkout #{branch}`
+        git_checkout(branch)
         sh("git-rebase master")
       end
     end
@@ -150,7 +150,7 @@ class Git < Thor
           break
         end
       end
-      `git-checkout #{branch} 2>/dev/null` if switch
+      git_checkout(branch) if switch
     end
   end
 
