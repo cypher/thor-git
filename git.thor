@@ -2,6 +2,36 @@ class GitError < RuntimeError; end
 class GitRebaseError < GitError; end
 
 class Git < Thor
+
+  desc "open [NAME]", "Create a new branch off master, named NAME"
+  def open(name)
+    newbranch = (!name.empty? ? name : begin
+      (require("readline")
+      print("* Name your branch: ")
+      Readline.readline.chomp)
+    end)
+    branch = git_branch
+    if git_branches.include?(newbranch) then
+      if (newbranch == branch) then
+        puts("* Already on branch \"#{newbranch}\"")
+      else
+        puts("* Switching to existing branch \"#{newbranch}\"")
+        git_checkout(newbranch)
+      end
+      exit(0)
+    end
+    unless (branch == "master") then
+      puts("* Switching to master")
+      git_checkout("master")
+    end
+    `git-checkout -b #{newbranch}`
+    unless $?.exitstatus.zero? then
+      puts("* Couldn't create branch #{newbranch}, switching back to #{branch}")
+      git_checkout(branch)
+      exit(1)
+    end
+    exit(0)
+  end
   
   desc "close [NAME]", "Delete the current branch and switch back to master"
   def close(name)
@@ -55,36 +85,6 @@ class Git < Thor
     project = "../#{File.basename(Dir.pwd)}.git"
     puts(cmd = "git svn clone #{svnurl} #{project}")
     `#{cmd}`
-  end
-
-  desc "open [NAME]", "Create a new branch off master, named NAME"
-  def open(name)
-    newbranch = (!name.empty? ? name : begin
-      (require("readline")
-      print("* Name your branch: ")
-      Readline.readline.chomp)
-    end)
-    branch = git_branch
-    if git_branches.include?(newbranch) then
-      if (newbranch == branch) then
-        puts("* Already on branch \"#{newbranch}\"")
-      else
-        puts("* Switching to existing branch \"#{newbranch}\"")
-        git_checkout(newbranch)
-      end
-      exit(0)
-    end
-    unless (branch == "master") then
-      puts("* Switching to master")
-      git_checkout("master")
-    end
-    `git-checkout -b #{newbranch}`
-    unless $?.exitstatus.zero? then
-      puts("* Couldn't create branch #{newbranch}, switching back to #{branch}")
-      git_checkout(branch)
-      exit(1)
-    end
-    exit(0)
   end
 
   desc "push", "Push local commits into the remote repository"
