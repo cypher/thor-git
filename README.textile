@@ -4,7 +4,7 @@ Here are a few Thor tasks to make developing with Git easier (and some correspon
 make invoking them easier). Install them with:
 
 <pre>
-$ rake install
+$ thor install git.thor
 </pre>
 
 Or, if you don't want to actually download this stuff, just use Thor:
@@ -29,24 +29,11 @@ $ thor git:push
 Commits any changes in your current branch not yet pushed upstream _and_ ports 'em over to master. I use @git ci@ for this one.
 
 <pre>
-$ thor git:open [NAME=mynewbranch]
-</pre>
-
-Creates a new branch off master. Think of this as opening an issue, or a new path of development. I use @git open@ for this one, allowing you to call it like so:
-
-<pre>
-$ git open mynewbranch
-</pre>
-
-You can even call it without the branch name and it'll ask you for it:
-
-<pre>
-$ git open
-* Name your branch: mynewbranch
+$ thor git:open [mynewbranch]
 </pre>
 
 <pre>
-$ thor git:close [NAME=mynewbranch]
+$ thor git:close [mynewbranch]
 </pre>
 
 This is open's brother, and should be used when you finish something and have already moved it to
