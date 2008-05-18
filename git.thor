@@ -3,11 +3,6 @@ class GitRebaseError < GitError; end
 
 class Git < Thor
   
-  def initialize
-    super
-    correct_env_from_argv
-  end
-  
   desc "close", "Delete the current branch and switch back to master"
   def close
     branch = (env("NAME") or git_branch)
@@ -231,29 +226,5 @@ class Git < Thor
   
   def git_svn?
     (not File.readlines(".git/config").grep(/^\[svn-remote "svn"\]\s*$/).empty?)
-  end
-  
-  def argv
-    ARGV.inject([]) do |argv, arg|
-      if (argv.last and argv.last =~ /=$/) then
-        (argv.last << arg)
-      else
-        (argv << arg.dup)
-      end
-      argv
-    end
-  end
-
-  def correct_env_from_argv
-    argv.grep(/^[A-Z]+=/).each { |kv| ENV.send(:[]=, *kv.split("=", 2)) }
-  end
-
-  def env(name)
-    case val = ENV[name]
-    when "", nil then
-      nil
-    else
-      val
-    end
   end
 end
