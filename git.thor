@@ -105,7 +105,7 @@ class Git < Thor
   desc "squash", "Squash the current branch into the master branch."
   def squash
     @merge_flags = "--squash"
-    Rake::Task["git:fold"].invoke
+    fold
   end
 
   desc "update", "Pull new commits from the repository"
