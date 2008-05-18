@@ -1,0 +1,57 @@
+h1. Thor-Git
+
+Here are a few Thor tasks to make developing with Git easier (and some corresponding Git aliases to 
+make invoking them easier). Install them with:
+
+<pre>
+$ rake install
+</pre>
+
+Or, if you don't want to actually download this stuff, just use Thor:
+
+<pre>
+$ thor install "http://github.com/cypher/thor-git/tree/master/git.thor?raw=true"
+</pre>
+
+h2. Common Commands
+
+<pre>
+$ thor git:update
+</pre>
+
+Updates your current git repository, autodetecting whether you have a regular ol' git project or a
+git-svn project. I recommend aliasing it @git up@.
+
+<pre>
+$ thor git:push
+</pre>
+
+Commits any changes in your current branch not yet pushed upstream _and_ ports 'em over to master. I use @git ci@ for this one.
+
+<pre>
+$ thor git:open [NAME=mynewbranch]
+</pre>
+
+Creates a new branch off master. Think of this as opening an issue, or a new path of development. I use @git open@ for this one, allowing you to call it like so:
+
+<pre>
+$ git open mynewbranch
+</pre>
+
+You can even call it without the branch name and it'll ask you for it:
+
+<pre>
+$ git open
+* Name your branch: mynewbranch
+</pre>
+
+<pre>
+$ thor git:close [NAME=mynewbranch]
+</pre>
+
+This is open's brother, and should be used when you finish something and have already moved it to
+master or upstream. If you haven't yet, don't worry - this won't eat your data. Like open, this one I alias to @git close@.
+
+h2. Credits
+
+Brian Donovan (aka eventualbuddha) created the original sake-git task set, which can be found at http://github.com/eventualbuddha/sake-git/tree
