@@ -3,9 +3,9 @@ class GitRebaseError < GitError; end
 
 class Git < Thor
   
-  desc "close", "Delete the current branch and switch back to master"
-  def close
-    branch = (env("NAME") or git_branch)
+  desc "close [NAME]", "Delete the current branch and switch back to master"
+  def close(name)
+    branch = (!name.empty? ? name : git_branch)
     current = git_branch
     if (branch == "master") then
       $stderr.puts("* Cannot delete master branch")
