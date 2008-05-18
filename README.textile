@@ -20,13 +20,13 @@ $ thor git:update
 </pre>
 
 Updates your current git repository, autodetecting whether you have a regular ol' git project or a
-git-svn project. I recommend aliasing it @git up@.
+git-svn project.
 
 <pre>
 $ thor git:push
 </pre>
 
-Commits any changes in your current branch not yet pushed upstream _and_ ports 'em over to master. I use @git ci@ for this one.
+Commits any changes in your current branch not yet pushed upstream _and_ ports 'em over to master.
 
 <pre>
 $ thor git:open [mynewbranch]
@@ -37,7 +37,7 @@ $ thor git:close [mynewbranch]
 </pre>
 
 This is open's brother, and should be used when you finish something and have already moved it to
-master or upstream. If you haven't yet, don't worry - this won't eat your data. Like open, this one I alias to @git close@.
+master or upstream. If you haven't yet, don't worry - this won't eat your data.
 
 h2. Credits
 
