@@ -130,7 +130,7 @@ class Git < Thor
       if switch then
         puts("* Porting changes into #{branch}...")
         git_checkout(branch)
-        sh("git-rebase master")
+        `git-rebase master`
       end
     end
   end
@@ -186,7 +186,7 @@ class Git < Thor
     ensure
       if stash then
         puts("* Applying changes...")
-        sh("git-stash apply")
+        `git-stash apply`
         `git-stash clear` if clear
       end
     end
@@ -194,15 +194,15 @@ class Git < Thor
  
   def git_checkout(what = nil)
     branch = git_branch
-    sh("git-checkout #{what}") unless (branch == what)
+    `git-checkout #{what}` unless (branch == what)
     if block_given? then
       yield
-      sh("git-checkout #{branch}") unless (branch == what)
+      `git-checkout #{branch}` unless (branch == what)
     end
   end
  
   def git_fetch
-    sh("git#{"-svn" if git_svn?} fetch")
+    `git#{"-svn" if git_svn?} fetch`
   end
  
   def assert_command_succeeded(*args)
@@ -216,17 +216,17 @@ class Git < Thor
   def git_rebase(what = nil)
     if git_svn? then
       git_checkout(what) do
-        sh("git-svn rebase --local")
+        `git-svn rebase --local`
         assert_rebase_succeeded(what)
       end
     else
-      sh("git-rebase origin/master #{what}")
+      `git-rebase origin/master #{what}`
       assert_rebase_succeeded(what)
     end
   end
   
   def git_push
-    git_svn? ? (sh("git-svn dcommit")) : (sh("git-push"))
+    git_svn? ? (`git-svn dcommit`) : (`git-push`)
   end
   
   def git_svn?
