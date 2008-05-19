@@ -1,6 +1,8 @@
+require 'thor/runner'
+
 class Default < Thor
   desc "install", "Installs the thor-git tasks"
   def install
-    `thor install git.thor`
+    Thor::Runner.new.install("git.thor")
   end
 end
