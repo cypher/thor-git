@@ -47,7 +47,7 @@ class Git < Thor
       git_checkout("master")
     end
     puts "* Deleting branch #{branch}"
-    `git-branch -d #{branch} 2>/dev/null`
+    git_branch(branch, :delete => true)
     if $?.exitstatus == 1
       $stderr.puts "* Branch #{branch} isn't a strict subset of master, quitting"
       git_checkout(current)
