@@ -25,7 +25,7 @@ class Git < Thor
       puts "* Switching to master"
       git_checkout("master")
     end
-    git_checkout newbranch, :create_branch => true
+    git_checkout(newbranch, :create_branch => true)
     unless $?.exitstatus.zero?
       puts "* Couldn't create branch #{newbranch}, switching back to #{branch}"
       git_checkout(branch)
