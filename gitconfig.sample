@@ -1,0 +1,8 @@
+[alias]
+	ci = !thor git:push
+	up = !thor git:update
+	upa = !thor git:update:all
+	open = !thor git:open -- $1
+	close = !thor git:close -- $1
+	fold = !thor git:fold
+	sq = !thor git:squash
