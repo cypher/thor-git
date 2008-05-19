@@ -25,7 +25,7 @@ class Git < Thor
       puts "* Switching to master"
       git_checkout("master")
     end
-    `git-checkout -b #{newbranch}`
+    git_checkout newbranch, :create_branch => true
     unless $?.exitstatus.zero?
       puts "* Couldn't create branch #{newbranch}, switching back to #{branch}"
       git_checkout(branch)
@@ -200,12 +200,15 @@ class Git < Thor
     end
   end
  
-  def git_checkout(what = nil)
+  def git_checkout(what = nil, opts = {})
+    silent = opts[:silent] ? "-q" : ""
+    create_branch = opts[:create_branch] ? "-b" : ""
+    
     branch = git_branch
-    `git-checkout #{what}` if branch != what
+    `git-checkout #{silent} #{create_branch} #{what}` if branch != what
     if block_given?
       yield
-      `git-checkout #{branch}` if branch != what
+      `git-checkout #{silent} #{create_branch} #{branch}` if branch != what
     end
   end
  
