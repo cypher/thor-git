@@ -7,11 +7,13 @@ make invoking them easier). Install them with:
 $ thor install git.thor
 </pre>
 
-Or, if you don't want to actually download this stuff, just use Thor:
+Or, if you don't want to actually download this stuff, just use:
 
 <pre>
 $ thor install "http://github.com/cypher/thor-git/tree/master/git.thor?raw=true"
 </pre>
+
+You can add the git aliases by copying them into the corresponding section of your global @.gitconfig@.
 
 h2. Common Commands
 
@@ -31,6 +33,8 @@ Commits any changes in your current branch not yet pushed upstream _and_ ports '
 <pre>
 $ thor git:open [mynewbranch]
 </pre>
+
+Creates a new branch off master. Think of this as opening an issue, or a new path of development.
 
 <pre>
 $ thor git:close [mynewbranch]
