@@ -67,7 +67,7 @@ class Git < Thor
     puts "* Switching to master"
     git_checkout("master")
     puts "* Merging #{branch}"
-    system("git-merge #{@merge_flags} #{branch}")
+    git_merge(branch, @merge_flags)
     if $?.exitstatus == 1
       $stderr.puts "* Merge had errors -- see to your friend"
       exit(1)
@@ -110,7 +110,7 @@ class Git < Thor
 
   desc "squash", "Squash the current branch into the master branch."
   def squash
-    @merge_flags = "--squash"
+    @merge_flags = {:squash => true}
     fold
   end
 
@@ -170,6 +170,12 @@ class Git < Thor
   
   def git_branches
     `git-branch`.to_a.map { |b| b[(2..-1)].chomp }
+  end
+  
+  def git_merge(what, opts = {})
+    squash = opts[:squash] ? "--squash" : ""
+    
+    `git-merge #{squash} #{what}`
   end
   
   def git?
