@@ -1,5 +1,6 @@
 class GitError < RuntimeError; end
 class GitRebaseError < GitError; end
+class GitBranchDeleteError < GitError; end
 
 class Git < Thor
 
@@ -156,8 +157,15 @@ class Git < Thor
 
   private
   
-  def git_branch
-    `git-branch`.grep(/^\*/).first.strip[(2..-1)]
+  def git_branch(what = nil, opts = {})
+    # If no name is given, return the name of the current branch
+    return `git-branch`.grep(/^\*/).first.strip[(2..-1)] if what.nil?
+    
+    delete = opts[:delete] ? "-d" : ""
+    force_delete = opts[:force_delete] ? "-D" : ""
+    
+    `git-branch #{delete} #{force_delete} #{what}`
+    assert_branch_delete_succeeded(what)
   end
   
   def git_branches
@@ -211,6 +219,10 @@ class Git < Thor
  
   def assert_rebase_succeeded(what = nil)
     assert_command_succeeded(GitRebaseError, "conflict while rebasing branch #{what}")
+  end
+  
+  def assert_branch_delete_succeeded(what = nil)
+    assert_command_succeeded(GitBranchDeleteError, "branch #{what} could not be deleted")
   end
   
   def git_rebase(what = nil)
