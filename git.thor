@@ -3,6 +3,8 @@ class GitRebaseError < GitError; end
 class GitBranchDeleteError < GitError; end
 
 class Git < Thor
+  
+  class NoRepositoryError < RuntimeError; end
 
   desc "open [NAME]", "Create a new branch off master, named NAME"
   def open(name)
@@ -195,8 +197,8 @@ class Git < Thor
     end
     begin
       yield
-    rescue
-      puts "* Encountered an error, backing out..."
+    rescue => e
+      puts "* Encountered an error (#{e}), backing out..."
     ensure
       if stash
         puts "* Applying changes..."
@@ -250,7 +252,21 @@ class Git < Thor
     git_svn? ? (`git-svn dcommit`) : (`git-push`)
   end
   
+  def chroot
+    # store cwd
+    dir = Dir.pwd
+    
+    # find .git
+    until File.directory?('.git') || File.expand_path('.') == '/'
+      Dir.chdir('..')
+    end
+    is_git = File.directory?('.git')
+    
+    raise NoRepositoryError, "No repository found containing #{dir}" unless is_git
+  end
+  
   def git_svn?
+    chroot
     (not File.readlines(".git/config").grep(/^\[svn-remote "svn"\]\s*$/).empty?)
   end
 end
