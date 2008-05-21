@@ -1,12 +1,12 @@
 # module: git
 
-class GitError < RuntimeError; end
-class GitRebaseError < GitError; end
-class GitBranchDeleteError < GitError; end
-
 class Git < Thor
   
   class NoRepositoryError < RuntimeError; end
+  class GitError < RuntimeError; end
+  class GitRebaseError < GitError; end
+  class GitBranchDeleteError < GitError; end
+
 
   desc "open [NAME]", "Create a new branch off master, named NAME"
   def open(name=nil)
