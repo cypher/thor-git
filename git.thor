@@ -22,7 +22,8 @@ class Git < Thor
         puts "* Already on branch \"#{newbranch}\""
       else
         puts "* Switching to existing branch \"#{newbranch}\""
-        git_checkout(newbranch)
+        git_checkout(newbranch, :silent => true)
+        system "git log --pretty=oneline --abbrev-commit master..HEAD"
       end
       exit(0)
     end
