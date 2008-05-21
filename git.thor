@@ -1,3 +1,5 @@
+# module: git
+
 class GitError < RuntimeError; end
 class GitRebaseError < GitError; end
 class GitBranchDeleteError < GitError; end
@@ -7,12 +9,13 @@ class Git < Thor
   class NoRepositoryError < RuntimeError; end
 
   desc "open [NAME]", "Create a new branch off master, named NAME"
-  def open(name)
-    newbranch = (!name.empty? ? name : begin
+  def open(name=nil)
+    newbranch = name if name && !name.empty?
+    newbranch ||= begin
       require "readline"
       print "* Name your branch: "
       Readline.readline.chomp
-    end)
+    end
     branch = git_branch
     if git_branches.include?(newbranch)
       if newbranch == branch
@@ -37,8 +40,9 @@ class Git < Thor
   end
   
   desc "close [NAME]", "Delete the current branch and switch back to master"
-  def close(name)
-    branch = (!name.empty? ? name : git_branch)
+  def close(name=nil)
+    branch = name if name && !name.empty?
+    branch ||= git_branch
     current = git_branch
     if branch == "master"
       $stderr.puts "* Cannot delete master branch"
