@@ -15,6 +15,10 @@ $ thor install "http://github.com/cypher/thor-git/tree/master/git.thor?raw=true"
 
 You can add the git aliases by copying them into the corresponding section of your global @.gitconfig@.
 
+The tasks are designed around a particular workflow in which you primarily develop against a single upstream that you @git-push@ or @git-svn dcommit@ to. In this workflow @master@ typically mirrors this upstream, and little or no work is done on @master@. Instead you branch off master with @thor git:open@ and then commit as you go, using @thor git:push@ to send your changes upstream, and finally using @thor git:close@ to delete the branch when you're done with it.
+
+Let me say it again, because it's very important: all these tasks assume that @master@ is the nexus of your local branches and the portal to your remote branch.
+
 h2. Common Commands
 
 <pre>
