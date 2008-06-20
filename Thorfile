@@ -1,4 +1,4 @@
-require 'thor/runner'
+require 'thor'
 
 class Default < Thor
   desc "install", "Installs the thor-git tasks"
