@@ -74,6 +74,7 @@ class Git < Thor
     puts "* Switching to master"
     git_checkout("master")
     puts "* Merging #{branch}"
+    @merge_flags ||= {}
     git_merge(branch, @merge_flags)
     if $?.exitstatus == 1
       $stderr.puts "* Merge had errors -- see to your friend"
