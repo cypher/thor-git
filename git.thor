@@ -227,7 +227,7 @@ class Git < Thor
   end
  
   def git_fetch
-    `git#{"-svn" if git_svn?} fetch`
+    `git#{" svn" if git_svn?} fetch`
   end
  
   def assert_command_succeeded(*args)
