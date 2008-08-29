@@ -167,37 +167,37 @@ class Git < Thor
   
   def git_branch(what = nil, opts = {})
     # If no name is given, return the name of the current branch
-    return `git-branch`.grep(/^\*/).first.strip[(2..-1)] if what.nil?
+    return `git branch`.grep(/^\*/).first.strip[(2..-1)] if what.nil?
     
     delete = opts[:delete] ? "-d" : ""
     force_delete = opts[:force_delete] ? "-D" : ""
     
-    `git-branch #{delete} #{force_delete} #{what}`
+    `git branch #{delete} #{force_delete} #{what}`
     assert_branch_delete_succeeded(what)
   end
   
   def git_branches
-    `git-branch`.to_a.map { |b| b[(2..-1)].chomp }
+    `git branch`.to_a.map { |b| b[(2..-1)].chomp }
   end
   
   def git_merge(what, opts = {})
     squash = opts[:squash] ? "--squash" : ""
     
-    `git-merge #{squash} #{what}`
+    `git merge #{squash} #{what}`
   end
   
   def git?
-    `git-status`
+    `git status`
     $?.exitstatus != 128
   end
   
   def git_stash
-    `git-diff-files --quiet`
+    `git diff-files --quiet`
     if $?.exitstatus == 1
       stash = true
-      clear = (`git-stash list`.scan("\n").size == 0)
+      clear = (`git stash list`.scan("\n").size == 0)
       puts "* Saving changes..."
-      `git-stash save`
+      `git stash save`
     else
       stash = false
     end
@@ -208,8 +208,8 @@ class Git < Thor
     ensure
       if stash
         puts "* Applying changes..."
-        `git-stash apply`
-        `git-stash clear` if clear
+        `git stash apply`
+        `git stash clear` if clear
       end
     end
   end
@@ -219,10 +219,10 @@ class Git < Thor
     create_branch = opts[:create_branch] ? "-b" : ""
     
     branch = git_branch
-    `git-checkout #{silent} #{create_branch} #{what}` if branch != what
+    `git checkout #{silent} #{create_branch} #{what}` if branch != what
     if block_given?
       yield
-      `git-checkout #{silent} #{create_branch} #{branch}` if branch != what
+      `git checkout #{silent} #{create_branch} #{branch}` if branch != what
     end
   end
  
@@ -245,17 +245,17 @@ class Git < Thor
   def git_rebase(what = nil)
     if git_svn?
       git_checkout(what) do
-        `git-svn rebase --local`
+        `git svn rebase --local`
         assert_rebase_succeeded(what)
       end
     else
-      `git-rebase origin/master #{what}`
+      `git rebase origin/master #{what}`
       assert_rebase_succeeded(what)
     end
   end
   
   def git_push
-    git_svn? ? (`git-svn dcommit`) : (`git-push`)
+    git_svn? ? (`git svn dcommit`) : (`git push`)
   end
   
   def chroot
