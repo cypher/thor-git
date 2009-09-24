@@ -139,7 +139,7 @@ class Git < Thor
       if switch
         puts "* Porting changes into #{branch}..."
         git_checkout(branch)
-        git_rebase("master")
+        git_rebase(branch)
       end
     end
   end
