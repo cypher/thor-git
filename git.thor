@@ -192,7 +192,7 @@ class Git < Thor
   end
   
   def git_stash
-    `git diff-files --quiet`
+    `git diff-files --quiet --ignore-submodules`
     if $?.exitstatus == 1
       stash = true
       clear = (`git stash list`.scan("\n").size == 0)
