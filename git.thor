@@ -1,7 +1,7 @@
 # module: git
 
 class Git < Thor
-  
+
   class NoRepositoryError < RuntimeError; end
   class GitError < RuntimeError; end
   class GitRebaseError < GitError; end
@@ -39,7 +39,7 @@ class Git < Thor
     end
     exit(0)
   end
-  
+
   desc "close [NAME]", "Delete the current branch and switch back to master"
   def close(name=nil)
     branch = name if name && !name.empty?
@@ -164,33 +164,33 @@ class Git < Thor
   end
 
   private
-  
+
   def git_branch(what = nil, opts = {})
     # If no name is given, return the name of the current branch
     return `git branch`.grep(/^\*/).first.strip[(2..-1)] if what.nil?
-    
+
     delete = opts[:delete] ? "-d" : ""
     force_delete = opts[:force_delete] ? "-D" : ""
-    
+
     `git branch #{delete} #{force_delete} #{what}`
     assert_branch_delete_succeeded(what)
   end
-  
+
   def git_branches
     `git branch`.to_a.map { |b| b[(2..-1)].chomp }
   end
-  
+
   def git_merge(what, opts = {})
     squash = opts[:squash] ? "--squash" : ""
-    
+
     `git merge #{squash} #{what}`
   end
-  
+
   def git?
     `git status`
     $?.exitstatus != 128
   end
-  
+
   def git_stash
     `git diff-files --quiet --ignore-submodules`
     if $?.exitstatus == 1
@@ -213,11 +213,11 @@ class Git < Thor
       end
     end
   end
- 
+
   def git_checkout(what = nil, opts = {})
     silent = opts[:silent] ? "-q" : ""
     create_branch = opts[:create_branch] ? "-b" : ""
-    
+
     branch = git_branch
     `git checkout #{silent} #{create_branch} #{what}` if branch != what
     if block_given?
@@ -225,23 +225,23 @@ class Git < Thor
       `git checkout #{silent} #{create_branch} #{branch}` if branch != what
     end
   end
- 
+
   def git_fetch
     `git#{" svn" if git_svn?} fetch`
   end
- 
+
   def assert_command_succeeded(*args)
     raise(*args) unless $?.exitstatus == 0
   end
- 
+
   def assert_rebase_succeeded(what = nil)
     assert_command_succeeded(GitRebaseError, "conflict while rebasing branch #{what}")
   end
-  
+
   def assert_branch_delete_succeeded(what = nil)
     assert_command_succeeded(GitBranchDeleteError, "branch #{what} could not be deleted")
   end
-  
+
   def git_rebase(what = nil)
     if git_svn?
       git_checkout(what) do
@@ -253,24 +253,24 @@ class Git < Thor
       assert_rebase_succeeded(what)
     end
   end
-  
+
   def git_push
     git_svn? ? (`git svn dcommit`) : (`git push`)
   end
-  
+
   def chroot
     # store cwd
     dir = Dir.pwd
-    
+
     # find .git
     until File.directory?('.git') || File.expand_path('.') == '/'
       Dir.chdir('..')
     end
     is_git = File.directory?('.git')
-    
+
     raise NoRepositoryError, "No repository found containing #{dir}" unless is_git
   end
-  
+
   def git_svn?
     chroot
     (not File.readlines(".git/config").grep(/^\[svn-remote "svn"\]\s*$/).empty?)

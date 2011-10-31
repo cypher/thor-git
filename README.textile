@@ -1,6 +1,6 @@
 h1. Thor-Git
 
-Here are a few Thor tasks to make developing with Git easier (and some corresponding Git aliases to 
+Here are a few Thor tasks to make developing with Git easier (and some corresponding Git aliases to
 make invoking them easier). Install them with:
 
 <pre>
